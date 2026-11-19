@@ -13,7 +13,8 @@ services:
     buildCommand: >-
       pip install -r requirements.txt &&
       python manage.py collectstatic --noinput &&
-      python manage.py migrate --noinput
+      python manage.py migrate --noinput &&
+      python manage.py loaddata productos_fixture.json || true
     startCommand: gunicorn forrajeria_web.wsgi:application
     healthCheckPath: /
     envVars:

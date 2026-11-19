@@ -1,0 +1,353 @@
+[
+{
+  "model": "productos.categoria",
+  "pk": 1,
+  "fields": {
+    "nombre": "Alimentos Balanceados"
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 2,
+  "fields": {
+    "nombre": "Forrajes y Granos"
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 3,
+  "fields": {
+    "nombre": "Limpieza"
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 4,
+  "fields": {
+    "nombre": "Mascotas"
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 1,
+  "fields": {
+    "nombre": "Perros",
+    "categoria": 1
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 2,
+  "fields": {
+    "nombre": "Gatos",
+    "categoria": 1
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 3,
+  "fields": {
+    "nombre": "Caballos",
+    "categoria": 1
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 4,
+  "fields": {
+    "nombre": "Avena",
+    "categoria": 2
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 5,
+  "fields": {
+    "nombre": "Maíz",
+    "categoria": 2
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 6,
+  "fields": {
+    "nombre": "Semillas",
+    "categoria": 2
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 7,
+  "fields": {
+    "nombre": "Detergentes",
+    "categoria": 3
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 8,
+  "fields": {
+    "nombre": "Lavandina",
+    "categoria": 3
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 9,
+  "fields": {
+    "nombre": "Artículos",
+    "categoria": 3
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 10,
+  "fields": {
+    "nombre": "Arenas",
+    "categoria": 4
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 11,
+  "fields": {
+    "nombre": "Juguetes",
+    "categoria": 4
+  }
+},
+{
+  "model": "productos.subcategoria",
+  "pk": 12,
+  "fields": {
+    "nombre": "Higiene",
+    "categoria": 4
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 1,
+  "fields": {
+    "nombre": "Balanceado Adultos 20kg",
+    "categoria": 1,
+    "subcategoria": 1,
+    "precio": "45000.00",
+    "stock": 12,
+    "descripcion": "Balanceado Adultos 20kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": "image/upload/v1782824871/oza5ngpoxltdjn342743.png",
+    "destacado": true,
+    "oferta": true
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 2,
+  "fields": {
+    "nombre": "Balanceado Cachorros 15kg",
+    "categoria": 1,
+    "subcategoria": 1,
+    "precio": "38000.50",
+    "stock": 8,
+    "descripcion": "Balanceado Cachorros 15kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": "image/upload/v1785418493/dujzbad7p8ifd8qw5ur1.png",
+    "destacado": true,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 3,
+  "fields": {
+    "nombre": "Alimento Premium Gatos 10kg",
+    "categoria": 1,
+    "subcategoria": 2,
+    "precio": "29500.75",
+    "stock": 15,
+    "descripcion": "Alimento Premium Gatos 10kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": "image/upload/v1785942956/r2fynhaeewxb4uv7d8fb.png",
+    "destacado": true,
+    "oferta": true
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 4,
+  "fields": {
+    "nombre": "Avena Forrajera 25kg",
+    "categoria": 2,
+    "subcategoria": 4,
+    "precio": "12600.00",
+    "stock": 30,
+    "descripcion": "Avena Forrajera 25kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": "image/upload/v1788448481/gcvwe32pi7lumcavqcoq.png",
+    "destacado": true,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 5,
+  "fields": {
+    "nombre": "Maíz Partido 25kg",
+    "categoria": 2,
+    "subcategoria": 5,
+    "precio": "9800.00",
+    "stock": 22,
+    "descripcion": "Maíz Partido 25kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 6,
+  "fields": {
+    "nombre": "Alpiste 5kg",
+    "categoria": 2,
+    "subcategoria": 6,
+    "precio": "4200.50",
+    "stock": 40,
+    "descripcion": "Alpiste 5kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": true
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 7,
+  "fields": {
+    "nombre": "Arena Sanitaria 10kg",
+    "categoria": 4,
+    "subcategoria": 10,
+    "precio": "8300.00",
+    "stock": 18,
+    "descripcion": "Arena Sanitaria 10kg — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 8,
+  "fields": {
+    "nombre": "Detergente Multiuso 3L",
+    "categoria": 3,
+    "subcategoria": 7,
+    "precio": "6600.66",
+    "stock": 25,
+    "descripcion": "Detergente Multiuso 3L — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 9,
+  "fields": {
+    "nombre": "Lavandina 1L",
+    "categoria": 3,
+    "subcategoria": 8,
+    "precio": "1900.90",
+    "stock": 60,
+    "descripcion": "Lavandina 1L — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 10,
+  "fields": {
+    "nombre": "Cepillo de mascotas",
+    "categoria": 4,
+    "subcategoria": 11,
+    "precio": "5800.00",
+    "stock": 14,
+    "descripcion": "Cepillo de mascotas — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": true
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 11,
+  "fields": {
+    "nombre": "Comedero automático",
+    "categoria": 4,
+    "subcategoria": 12,
+    "precio": "21000.00",
+    "stock": 5,
+    "descripcion": "Comedero automático — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 12,
+  "fields": {
+    "nombre": "Shampoo antipulgas",
+    "categoria": 4,
+    "subcategoria": 12,
+    "precio": "7200.25",
+    "stock": 0,
+    "descripcion": "Shampoo antipulgas — producto de calidad para tu mascota y tu hogar. Consultá stock y envíos por WhatsApp.",
+    "imagen": null,
+    "destacado": false,
+    "oferta": false
+  }
+},
+{
+  "model": "productos.grupovariante",
+  "pk": 1,
+  "fields": {
+    "nombre": "Tamaño"
+  }
+},
+{
+  "model": "productos.opcionvariante",
+  "pk": 1,
+  "fields": {
+    "grupo": 1,
+    "nombre": "10kg"
+  }
+},
+{
+  "model": "productos.opcionvariante",
+  "pk": 2,
+  "fields": {
+    "grupo": 1,
+    "nombre": "20kg"
+  }
+},
+{
+  "model": "productos.varianteproducto",
+  "pk": 1,
+  "fields": {
+    "producto": 2,
+    "precio_extra": "0.00",
+    "stock": 8,
+    "opciones": [
+      1
+    ]
+  }
+},
+{
+  "model": "productos.varianteproducto",
+  "pk": 2,
+  "fields": {
+    "producto": 2,
+    "precio_extra": "8000.00",
+    "stock": 0,
+    "opciones": [
+      2
+    ]
+  }
+}
+]
