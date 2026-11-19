@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static l10n productos_extras %}
+
+{% block title %}Forrajería Rox — Todo para tus mascotas y el hogar{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDER / HERO
+═══════════════════════════════════════════════════════ -->
+
+<section class="container slider" aria-label="Promociones destacadas">
+    <div class="slides">
+        <img src="{% static 'img/banner1.jpg' %}" alt="Banner promocional 1">
+        <img src="{% static 'img/banner2.jpg' %}" alt="Banner promocional 2">
+        <img src="{% static 'img/banner3.jpg' %}" alt="Banner promocional 3">
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     COMPARTIR TIENDA
+═══════════════════════════════════════════════════════ -->
+
+<section class="container compartir-tienda">
+    <div class="compartir-info">
+        <div class="compartir-icono-grande" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+        </div>
+        <div class="compartir-textos">
+            <h3>Compartí nuestra tienda</h3>
+            <p>¿Conocés a alguien que pueda necesitar nuestros productos? ¡Compartile nuestra tienda!</p>
+        </div>
+    </div>
+    <button class="btn-compartir-tienda" onclick="compartirPagina()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+        </svg>
+        Compartir tienda
+    </button>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     BENEFICIOS
+═══════════════════════════════════════════════════════ -->
+
+<section class="container beneficios-inicio">
+
+    <div>
+        <span class="beneficio-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+        </span>
+        <div>
+            <strong>Pedidos fáciles</strong>
+            <span>Consultá y comprá por WhatsApp.</span>
+        </div>
+    </div>
+
+    <div>
+        <span class="beneficio-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+                <path d="M4 5c0 1.66 3.58 3 8 3s8-1.34 8-3"></path>
+                <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+                <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
+            </svg>
+        </span>
+        <div>
+            <strong>Gran variedad</strong>
+            <span>Alimentos, forrajes, limpieza y más.</span>
+        </div>
+    </div>
+
+    <div>
+        <span class="beneficio-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13" rx="1"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+        </span>
+        <div>
+            <strong>Consultá envíos</strong>
+            <span>Coordinamos entrega según tu zona.</span>
+        </div>
+    </div>
+
+    <div>
+        <span class="beneficio-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+        </span>
+        <div>
+            <strong>Varias formas de pago</strong>
+            <span>Transferencia, efectivo y Mercado Pago.</span>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PRODUCTOS DESTACADOS
+═══════════════════════════════════════════════════════ -->
+
+{% if destacados %}
+
+<h2 class="container titulo">
+    <span class="titulo-destacado">⭐</span> Productos destacados
+</h2>
+
+<div class="container destacados">
+
+    {% for producto in destacados %}
+
+    <a href="{% url 'detalle_producto' producto.id %}" class="card card-lite">
+
+        <span class="card-imagen">
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url|cloudinary_thumb }}" alt="{{ producto.nombre }}" loading="lazy">
+            {% else %}
+                <img src="{% static 'img/placeholder.svg' %}" alt="{{ producto.nombre }}" loading="lazy">
+            {% endif %}
+        </span>
+
+        <span class="card-cuerpo">
+            <h3>{{ producto.nombre }}</h3>
+            <span class="precio" data-price="{{ producto.precio|unlocalize }}">${{ producto.precio }}</span>
+        </span>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+<!-- ═══════════════════════════════════════════════════════
+     CATEGORÍAS + PRODUCTOS
+═══════════════════════════════════════════════════════ -->
+
+<div class="container contenedor-principal">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <p class="sidebar-titulo">Categorías</p>
+
+        {% for categoria in categorias %}
+
+        <div class="cat-item">
+
+            <div class="cat-header" onclick="toggleCategoria(this)">
+                {{ categoria.nombre }}
+                <span class="cat-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </span>
+            </div>
+
+            <div class="cat-body">
+                {% for sub in categoria.subcategoria_set.all %}
+                    <a href="{% url 'filtrar_subcategoria' sub.id %}">{{ sub.nombre }}</a>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </aside>
+
+    <!-- PRODUCTOS -->
+
+    <div>
+
+        {% if busqueda %}
+        <h2 class="titulo">Resultados para “{{ busqueda }}”</h2>
+        {% endif %}
+
+        <div class="contenedor">
+
+            {% for producto in productos %}
+
+            <div class="card{% if producto.stock < 1 %} sin-stock{% endif %}">
+
+                {% if producto.oferta %}
+                <div class="oferta">Oferta</div>
+                {% endif %}
+
+                <a href="{% url 'detalle_producto' producto.id %}" class="card-imagen">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url|cloudinary_thumb }}" alt="{{ producto.nombre }}" loading="lazy">
+                    {% else %}
+                        <img src="{% static 'img/placeholder.svg' %}" alt="{{ producto.nombre }}" loading="lazy">
+                    {% endif %}
+                </a>
+
+                <div class="card-cuerpo">
+
+                    <a href="{% url 'detalle_producto' producto.id %}" style="text-decoration:none;color:inherit;">
+                        <h3>{{ producto.nombre }}</h3>
+                    </a>
+
+                    <p class="card-descripcion">{{ producto.descripcion|truncatechars:45 }}</p>
+
+                    <p class="precio" data-price="{{ producto.precio|unlocalize }}">${{ producto.precio }}</p>
+
+                    {% if producto.stock > 0 %}
+                        <p class="stock-ok"><span class="punto"></span>Stock disponible</p>
+                    {% else %}
+                        <p class="stock-no"><span class="punto"></span>Sin stock</p>
+                    {% endif %}
+
+                    <div class="card-acciones">
+
+                        <a class="btn btn-carrito" href="{% url 'agregar_carrito' producto.id %}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            Agregar al carrito
+                        </a>
+
+                        {% if producto.stock > 0 %}
+                        <a class="btn btn-whatsapp"
+                           href="https://wa.me/5493541343314?text=Hola, quiero comprar {{ producto.nombre }}"
+                           target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                            </svg>
+                            Comprar
+                        </a>
+                        {% else %}
+                        <span class="btn btn-whatsapp deshabilitado" aria-disabled="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                            </svg>
+                            Comprar
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="sin-resultados">
+                <strong>No hay productos en esta categoría.</strong>
+                Probá con otra búsqueda o consultanos por WhatsApp.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    /* ═══════════════════════════════════════
+       CATEGORÍAS (acordeón)
+    ═══════════════════════════════════════ */
+
+    function toggleCategoria(header) {
+        const body = header.nextElementSibling;
+        const estaAbierto = body.classList.contains('abierto');
+
+        document.querySelectorAll('.cat-body').forEach(b =>
+            b.classList.remove('abierto')
+        );
+
+        document.querySelectorAll('.cat-header').forEach(h =>
+            h.classList.remove('activo')
+        );
+
+        if (!estaAbierto) {
+            body.classList.add('abierto');
+            header.classList.add('activo');
+        }
+    }
+</script>
+
+{% endblock %}

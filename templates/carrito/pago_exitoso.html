@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% if es_premio_sin_pago %}Premio confirmado{% elif pago_pendiente %}Pago pendiente{% elif venta.metodo_pago == 'mercadopago' %}Pago aprobado{% else %}Pedido creado{% endif %} | Forrajería Rox
+{% endblock %}
+
+{% block content %}
+
+<div class="pagina-estado">
+
+    <div class="check">
+        <div class="icono">
+            {% if pago_pendiente %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            {% else %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            {% endif %}
+        </div>
+
+        {% if es_premio_sin_pago %}
+            <h2>¡Premio confirmado!</h2>
+            <p class="check-sub">Te llevamos a WhatsApp para coordinar la entrega.</p>
+        {% elif pago_pendiente %}
+            <h2>Estamos esperando la confirmación del pago</h2>
+            <p class="check-sub">
+                Mercado Pago todavía no nos avisó que el pago se aprobó.
+                Si ya pagaste, esperá unos segundos y actualizá esta página.
+            </p>
+        {% elif venta.metodo_pago == 'mercadopago' %}
+            <h2>¡Pago aprobado correctamente!</h2>
+        {% else %}
+            <h2>¡Pedido creado correctamente!</h2>
+            <p class="check-sub">Confirmá tu pedido por WhatsApp para coordinar el pago y la entrega.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Resumen de tu pedido — Nº {{ venta.id }}</h3>
+
+        {% for item in items %}
+        <div class="item-row">
+            <span>{{ item.nombre }} x{{ item.cantidad }}</span>
+            <span>${{ item.subtotal }}</span>
+        </div>
+        {% endfor %}
+
+
+        <div class="total-row">
+            <span>Total</span>
+            <span>${{ total }}</span>
+        </div>
+
+        <p class="info-extra">
+            🚚 Entrega: {{ metodo_entrega_label }}
+            {% if direccion and direccion != "No especificada" %} — {{ direccion }}{% endif %}
+        </p>
+
+        {% if pago_pendiente %}
+        <p class="info-extra">
+            💳 Método de pago: Mercado Pago
+        </p>
+        {% endif %}
+    </div>
+
+
+    {% if pago_pendiente %}
+        <a href="{% url 'ver_carrito' %}" class="btn btn-pago">
+            🛒 Volver al carrito
+        </a>
+
+        <a href="" class="btn btn-pago btn-accion-secundaria" style="margin-top:10px;"
+           onclick="window.location.reload(); return false;">
+            🔄 Actualizar estado del pago
+        </a>
+    {% else %}
+        <a href="{{ whatsapp_url }}" class="btn btn-whatsapp" target="_blank" rel="noopener">
+            {% if es_premio_sin_pago %}📲 Coordinar entrega por WhatsApp{% else %}📲 Confirmar pedido por WhatsApp{% endif %}
+        </a>
+
+        {% if puede_comprobante %}
+        <a href="{% url 'generar_comprobante' venta.id venta.token %}" class="btn btn-pago" style="margin-top:10px;">
+            📄 Descargar comprobante
+        </a>
+        {% endif %}
+    {% endif %}
+
+    <p class="nota">
+        {% if pago_pendiente %}
+            Tu carrito sigue guardado por si el pago no se completa.
+            Podés volver y elegir otro método de pago.
+        {% elif es_premio_sin_pago %}
+            🔗 Te estamos redirigiendo a WhatsApp para coordinar la entrega…
+        {% elif metodo_entrega == 'envio' %}
+            🔗 Te estamos redirigiendo a WhatsApp para que nos pases tu ubicación exacta…
+        {% else %}
+            Enviá el mensaje de WhatsApp para que confirmemos tu entrega.
+        {% endif %}
+    </p>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    {% if ir_a_whatsapp %}
+    window.setTimeout(function () {
+        window.location.href = "{{ whatsapp_url|escapejs }}";
+    }, 1500);
+    {% endif %}
+</script>
+{% endblock %}

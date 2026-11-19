@@ -1,0 +1,55 @@
+# ─── Blueprint de Render ───
+# NOTA: el servicio "mi-forrajeria" YA existe y está configurado desde el
+# dashboard. Este archivo sirve como documentación de la infraestructura y
+# para poder recrearla con un Blueprint si algún día hace falta.
+# Los valores con `sync: false` se cargan a mano en el dashboard (secretos).
+
+services:
+  - type: web
+    name: mi-forrajeria
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput &&
+      python manage.py migrate --noinput
+    startCommand: gunicorn forrajeria_web.wsgi:application
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: mi-forrajeria.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://mi-forrajeria.onrender.com
+      # Secretos: se definen en el dashboard, nunca en el repo
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: MP_ACCESS_TOKEN
+        sync: false
+      - key: MP_WEBHOOK_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: NOTIFICATION_EMAIL
+        sync: false
+      # Brevo (HTTPS): necesario porque Render free bloquea los puertos SMTP.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false

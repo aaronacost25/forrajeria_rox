@@ -1,0 +1,741 @@
+{% extends 'base.html' %}
+{% load static l10n productos_extras %}
+
+{% block title %}Tu carrito | Forrajería Rox{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="cabecera-carrito">
+
+        <div>
+            <h1>Tu carrito</h1>
+            <p class="subtitulo">Revisá tu pedido antes de confirmar.</p>
+        </div>
+
+        <a href="{% url 'lista_productos' %}" class="seguir-comprando">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Seguir comprando
+        </a>
+
+    </div>
+
+
+    <div class="contador-productos">
+        <strong id="cantidad_total">{{ items|length }}</strong>
+        producto(s) en tu carrito
+    </div>
+
+
+    <div class="layout-carrito">
+
+        <!-- PRODUCTOS -->
+
+        <div class="columna-principal">
+
+            <div id="lista_productos">
+
+                {% for item in items %}
+
+                <div class="producto-card" id="producto-{{ item.id }}">
+
+                    <div class="info-producto">
+
+                        <div class="imagen-producto">
+                            {% if item.producto.imagen %}
+                                <img src="{{ item.producto.imagen.url|cloudinary_thumb }}" alt="{{ item.producto.nombre }}">
+                            {% else %}
+                                <img src="{% static 'img/placeholder.svg' %}" alt="{{ item.producto.nombre }}">
+                            {% endif %}
+                        </div>
+
+                        <div class="datos-producto">
+
+                            <h3>{{ item.producto.nombre }}</h3>
+
+                            {% if item.variante %}
+                            <p class="variante">
+                                {% for opcion in item.variante.opciones.all %}
+                                    {{ opcion.grupo.nombre }}: {{ opcion.nombre }}{% if not forloop.last %} · {% endif %}
+                                {% endfor %}
+                            </p>
+                            {% endif %}
+
+                            <p class="cantidad-texto" id="cantidad-{{ item.id }}">
+                                Cantidad: {{ item.cantidad }}
+                            </p>
+
+                            <p class="subtotal" id="subtotal-{{ item.id }}">
+                                $<span class="precio-dinamico" data-precio="{{ item.subtotal|unlocalize }}">{{ item.subtotal }}</span>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="acciones">
+
+                        <div class="cantidad-control">
+
+                            <button type="button" aria-label="Restar cantidad"
+                                    onclick="actualizarCantidad({{ item.id }}, 'restar')">
+                                −
+                            </button>
+
+                            <span class="cantidad-numero" id="numero-cantidad-{{ item.id }}">{{ item.cantidad }}</span>
+
+                            <button type="button" aria-label="Sumar cantidad"
+                                    onclick="actualizarCantidad({{ item.id }}, 'sumar')">
+                                +
+                            </button>
+
+                        </div>
+
+                        <button type="button"
+                                class="btn-eliminar"
+                                aria-label="Eliminar producto"
+                                title="Eliminar producto"
+                                onclick="actualizarCantidad({{ item.id }}, 'eliminar')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- CARRITO VACÍO -->
+
+            <div id="carrito_vacio" style="display:{% if items %}none{% else %}block{% endif %};text-align:center;">
+
+                <div class="vacio-icono">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </div>
+
+                <h2>Tu carrito está vacío</h2>
+                <p>Agregá productos para comenzar tu pedido.</p>
+
+                <a href="{% url 'lista_productos' %}" class="btn btn-pago btn-accion-secundaria" style="max-width:220px;margin:auto;">
+                    Ver catálogo
+                </a>
+
+            </div>
+
+
+            {% if items %}
+
+            <!-- VACIAR -->
+
+            <div class="botones-top">
+                <form method="post" action="{% url 'vaciar_carrito' %}" class="form-vaciar">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-vaciar" title="Vaciar carrito">Vaciar carrito</button>
+                </form>
+            </div>
+
+
+            <!-- ENTREGA -->
+
+            <div class="seccion-card">
+
+                <div class="titulo-seccion">
+                    <span class="icono">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="1" y="3" width="15" height="13" rx="1"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                    </span>
+                    Entrega
+                </div>
+
+                <div class="campo">
+                    <label for="metodo_entrega">Método de entrega</label>
+                    <select id="metodo_entrega" onchange="cambiarOpciones()">
+                        <option value="local">Retirar en local</option>
+                        <option value="envio">Envío a domicilio</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label id="label_opciones" for="opciones">Sucursal</label>
+                    <select id="opciones" onchange="calcularEnvio(); actualizarPago();"></select>
+                </div>
+
+                <div id="envio_monto" class="envio-info">🚚 Envío: $0</div>
+
+                <div id="aviso_envio" class="envio-info" hidden></div>
+
+            </div>
+
+
+            <!-- PAGO -->
+
+            <div class="seccion-card" id="seccion_pago"{% if solo_premios %} style="display:none;"{% endif %}>
+
+                <div class="titulo-seccion">
+                    <span class="icono">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                    </span>
+                    Método de pago
+                </div>
+
+                <div class="campo">
+                    <label for="metodo_pago">Seleccioná cómo pagar</label>
+                    <select id="metodo_pago" onchange="mostrarPago()">
+                        <option value="mercadopago">Débito / Crédito (Mercado Pago)</option>
+                        <option value="transferencia">Transferencia</option>
+                        <option value="efectivo">Efectivo</option>
+                    </select>
+                </div>
+
+                <div id="info_pago"></div>
+
+            </div>
+
+
+
+
+        <!-- RESUMEN -->
+
+        <aside class="columna-lateral">
+
+            <div class="total-box">
+
+                <h3 class="resumen-titulo">Resumen del pedido</h3>
+
+                <div class="resumen-linea">
+                    <span>Productos</span>
+                    <strong>$<span id="total_productos">{{ total_productos }}</span></strong>
+                </div>
+
+                <div class="resumen-linea">
+                    <span>Envío</span>
+                    <strong>$<span id="total_envio_resumen">0</span></strong>
+                </div>
+
+
+                <hr class="separador">
+
+                <span class="total-final-label">Total final</span>
+
+                <p class="total" id="total_final" data-total="{{ total|unlocalize }}">${{ total }}</p>
+
+                <div id="boton_whatsapp">
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+{{ tarifas_envio|json_script:"tarifas-envio" }}
+
+<script>
+
+    /* Si el navegador restaura esta página desde su caché al usar el botón
+       Atrás (bfcache), la recargamos para mostrar el carrito real, que ya
+       quedó vacío después de confirmar el pedido. */
+    window.addEventListener('pageshow', function (evento) {
+        if (evento.persisted) {
+            window.location.reload();
+        }
+    });
+
+    /* Evita el doble clic en los formularios de confirmación. */
+    document.addEventListener("submit", function (evento) {
+        if (!evento.target.classList.contains("form-confirmar")) {
+            return;
+        }
+        const boton = evento.target.querySelector('button[type="submit"]');
+        if (boton) {
+            boton.disabled = true;
+            boton.textContent = "Confirmando...";
+        }
+    });
+
+    /* =====================================================
+       VARIABLES
+    ===================================================== */
+
+    let envio = 0;
+    let totalProductosInicial = 0;
+    const descuentoAplicado = Number("{{ descuento_monto|unlocalize }}") || 0;
+
+    /* Carrito formado solo por premios canjeados (sin productos pagos). */
+    let soloPremios = {{ solo_premios|yesno:"true,false" }};
+
+    /* El POST de confirmación necesita el token CSRF. */
+    const csrfToken = "{{ csrf_token }}";
+    const confirmarUrl = "{% url 'confirmar_pedido_manual' %}";
+
+    /* Tarifas de envío: vienen del servidor para no duplicar precios en JS. */
+    const tarifasEnvio = JSON.parse(
+        document.getElementById("tarifas-envio").textContent
+    );
+
+    /* =====================================================
+       FORMATEAR PRECIO
+    ===================================================== */
+
+    function formatearPrecio(valor) {
+        let numero = Number(valor);
+        if (!Number.isFinite(numero)) {
+            numero = 0;
+        }
+        return numero.toLocaleString('es-AR', {
+            minimumFractionDigits: numero % 1 !== 0 ? 2 : 0,
+            maximumFractionDigits: 2
+        });
+    }
+
+    /* =====================================================
+       CONVERTIR PRECIO
+    ===================================================== */
+
+    function convertirPrecio(valor) {
+        if (valor === null || valor === undefined) {
+            return 0;
+        }
+        let texto = String(valor)
+            .trim()
+            .replace('$', '')
+            .replace(/\s/g, '');
+
+        if (texto.includes(',') && texto.includes('.')) {
+            texto = texto
+                .replace(/\./g, '')
+                .replace(',', '.');
+        } else if (texto.includes(',')) {
+            texto = texto.replace(',', '.');
+        }
+
+        const numero = Number(texto);
+        return Number.isFinite(numero) ? numero : 0;
+    }
+
+    /* =====================================================
+       FORMATEAR TODOS LOS PRECIOS INICIALES
+    ===================================================== */
+
+    function formatearPreciosIniciales() {
+        document.querySelectorAll(".precio-dinamico").forEach(elemento => {
+            const precio = elemento.getAttribute("data-precio");
+            elemento.textContent = formatearPrecio(convertirPrecio(precio));
+        });
+
+        const totalProductosElemento = document.getElementById("total_productos");
+        if (totalProductosElemento) {
+            totalProductosInicial = convertirPrecio(totalProductosElemento.textContent);
+            totalProductosElemento.textContent = formatearPrecio(totalProductosInicial);
+        }
+
+        const totalFinalElemento = document.getElementById("total_final");
+        if (totalFinalElemento) {
+            const totalOriginal = totalFinalElemento.getAttribute("data-total");
+            totalFinalElemento.textContent = `$${formatearPrecio(convertirPrecio(totalOriginal))}`;
+        }
+
+        document.body.classList.add("precios-listos");
+    }
+
+    /* =====================================================
+       ACTUALIZAR RESUMEN
+    ===================================================== */
+
+    function actualizarResumen(totalProductos) {
+        const productos = Number(totalProductos) || 0;
+        const totalFinal = Math.max(productos + envio - descuentoAplicado, 0);
+
+        const totalProductosElemento = document.getElementById("total_productos");
+        const totalEnvioElemento = document.getElementById("total_envio_resumen");
+        const totalFinalElemento = document.getElementById("total_final");
+        const envioMontoElemento = document.getElementById("envio_monto");
+
+        if (totalProductosElemento) {
+            totalProductosElemento.textContent = formatearPrecio(productos);
+        }
+
+        if (totalEnvioElemento) {
+            totalEnvioElemento.textContent = formatearPrecio(envio);
+        }
+
+        if (totalFinalElemento) {
+            totalFinalElemento.textContent = `$${formatearPrecio(totalFinal)}`;
+        }
+
+        if (envioMontoElemento) {
+            envioMontoElemento.textContent = `🚚 Envío: $${formatearPrecio(envio)}`;
+        }
+
+    }
+
+    /* =====================================================
+       OPCIONES DE ENTREGA
+    ===================================================== */
+
+    function cambiarOpciones() {
+        const metodo = document.getElementById("metodo_entrega").value;
+        const opciones = document.getElementById("opciones");
+        const label = document.getElementById("label_opciones");
+        const aviso = document.getElementById("aviso_envio");
+
+        opciones.innerHTML = "";
+
+        if (metodo === "local") {
+            label.textContent = "Sucursal:";
+            opciones.innerHTML += `
+                <option value="Mayu Sumaj">Mayu Sumaj</option>
+                <option value="Icho Cruz">Icho Cruz</option>`;
+            envio = 0;
+            if (aviso) {
+                aviso.innerHTML = "";
+                aviso.hidden = true;
+            }
+        } else {
+            label.textContent = "Localidad:";
+            opciones.innerHTML += `
+                <option value="Villa Carlos Paz">Villa Carlos Paz</option>
+                <option value="Mayu Sumaj">Mayu Sumaj</option>
+                <option value="San Antonio de Arredondo">San Antonio de Arredondo</option>
+                <option value="Icho Cruz">Icho Cruz</option>`;
+            if (aviso) {
+                aviso.innerHTML = "🛰️ Una vez que hagas el pago, la página te va a redirigir a WhatsApp para que nos pases tu ubicación exacta.";
+                aviso.hidden = false;
+            }
+        }
+
+        calcularEnvio();
+        actualizarPago();
+    }
+
+    /* =====================================================
+       CALCULAR ENVÍO
+    ===================================================== */
+
+    function calcularEnvio() {
+        const metodo = document.getElementById("metodo_entrega").value;
+        const lugar = document.getElementById("opciones").value;
+
+        envio = 0;
+
+        if (metodo === "envio") {
+            envio = Number(tarifasEnvio[lugar] || 0);
+        }
+
+        actualizarResumen(totalProductosInicial);
+    }
+
+    /* =====================================================
+       ACTUALIZAR CANTIDAD
+    ===================================================== */
+
+    function actualizarCantidad(id, accion) {
+        fetch(`/carrito/${accion}/${id}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No se pudo actualizar el carrito");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tarjeta = document.getElementById(`producto-${id}`);
+
+                if (accion === "eliminar") {
+                    if (tarjeta) {
+                        tarjeta.remove();
+                    }
+                } else {
+                    const cantidad = document.getElementById(`cantidad-${id}`);
+                    const subtotal = document.getElementById(`subtotal-${id}`);
+                    const numero = document.getElementById(`numero-cantidad-${id}`);
+
+                    if (cantidad) {
+                        cantidad.textContent = `Cantidad: ${data.cantidad}`;
+                    }
+
+                    if (numero) {
+                        numero.textContent = data.cantidad;
+                    }
+
+                    if (subtotal) {
+                        subtotal.innerHTML =
+                            `$<span class="precio-dinamico"
+                                   data-precio="${data.subtotal}">
+                                   ${formatearPrecio(data.subtotal)}
+                             </span>`;
+                    }
+                }
+
+                totalProductosInicial = convertirPrecio(data.total);
+                actualizarResumen(totalProductosInicial);
+
+                const tarjetas = document.querySelectorAll('[id^="producto-"]');
+                const contador = document.getElementById("cantidad_total");
+                if (contador) {
+                    contador.textContent = tarjetas.length;
+                }
+
+                if (tarjetas.length === 0) {
+                    document.getElementById("carrito_vacio").style.display = "block";
+                    document.querySelector(".total-box").style.display = "none";
+                    document.querySelector(".botones-top").style.display = "none";
+                } else {
+                    /* Recalculamos si quedó solo el premio (o si ya no). */
+                    soloPremios = Array.from(tarjetas).every(
+                        tarjeta => tarjeta.dataset.canje === "1"
+                    );
+                    actualizarPago();
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert("No se pudo actualizar el carrito. Intentá nuevamente.");
+            });
+    }
+
+    /* =====================================================
+       MÉTODO DE PAGO
+    ===================================================== */
+
+    function formularioConfirmacion(metodoPago, metodoEntrega, direccion) {
+        return `
+            <form method="post" action="${confirmarUrl}" class="form-confirmar">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input type="hidden" name="metodo_entrega" value="${metodoEntrega}">
+                <input type="hidden" name="direccion" value="${direccion}">
+                <input type="hidden" name="metodo_pago" value="${metodoPago}">
+                <button type="submit" class="btn btn-whatsapp">
+                    📲 Confirmar pedido por WhatsApp
+                </button>
+            </form>`;
+    }
+
+    function mostrarPago() {
+        const pago = document.getElementById("metodo_pago").value;
+        const info = document.getElementById("info_pago");
+        const boton = document.getElementById("boton_whatsapp");
+        const metodoEntrega = document.getElementById("metodo_entrega").value;
+        const direccion = document.getElementById("opciones").value;
+
+        info.innerHTML = "";
+        boton.innerHTML = "";
+
+        /* MERCADO PAGO */
+        if (pago === "mercadopago") {
+            info.innerHTML = `
+                <div class="info-pago-box">
+                    💡 En el siguiente paso vas a elegir las cuotas y ver el precio final con la comisión incluida.
+                </div>
+
+                <a class="btn btn-pago"
+                   style="margin-top:10px;"
+                   href="/carrito/elegir-cuotas/?metodo_entrega=${encodeURIComponent(metodoEntrega)}&direccion=${encodeURIComponent(direccion)}">
+                    💳 Elegir cuotas y pagar
+                </a>`;
+        }
+
+        /* TRANSFERENCIA */
+        if (pago === "transferencia") {
+            info.innerHTML = `
+                <div class="info-pago-box">
+                    <p><strong>Alias:</strong> pamelalucero24</p>
+                    <p><strong>Titular:</strong> Pamela Alejandra Lucero</p>
+                    <p><strong>Banco:</strong> Santander</p>
+                    <p style="color:var(--muted);font-size:.78rem;margin-top:8px;">
+                        📌 Realizá la transferencia y luego confirmá el pedido.
+                    </p>
+
+                    <button class="btn btn-pago btn-accion-secundaria"
+                            style="margin-top:10px;border:none;"
+                            onclick="copiarAlias()">
+                        📋 Copiar alias
+                    </button>
+                </div>`;
+
+            boton.innerHTML = formularioConfirmacion(
+                "transferencia", metodoEntrega, direccion
+            );
+        }
+
+        /* EFECTIVO */
+        if (pago === "efectivo") {
+            info.innerHTML = `
+                <div class="info-pago-box">
+                    💵 Pagás en efectivo al retirar o recibir el pedido.
+                </div>`;
+
+            boton.innerHTML = formularioConfirmacion(
+                "efectivo", metodoEntrega, direccion
+            );
+        }
+    }
+
+    /* =====================================================
+       PAGO SEGÚN EL TIPO DE PEDIDO
+       Si el carrito es solo premios y retira en local, no hay nada que
+       pagar: ocultamos los métodos de pago y ofrecemos WhatsApp directo.
+    ===================================================== */
+
+    function actualizarPago() {
+        const metodoEntrega = document.getElementById("metodo_entrega").value;
+        const seccionPago = document.getElementById("seccion_pago");
+        const info = document.getElementById("info_pago");
+        const boton = document.getElementById("boton_whatsapp");
+        const sinPago = soloPremios && metodoEntrega === "local";
+
+        if (seccionPago) {
+            seccionPago.style.display = sinPago ? "none" : "";
+        }
+
+        if (sinPago) {
+            const direccion = document.getElementById("opciones").value;
+
+            if (info) {
+                info.innerHTML = "";
+            }
+            if (boton) {
+                boton.innerHTML = `
+                    <form method="post" action="${confirmarUrl}" class="form-confirmar">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                        <input type="hidden" name="metodo_entrega" value="local">
+                        <input type="hidden" name="direccion" value="${direccion}">
+                        <input type="hidden" name="metodo_pago" value="canje">
+                        <button type="submit" class="btn btn-whatsapp">
+                            📲 Confirmar premio por WhatsApp
+                        </button>
+                    </form>`;
+            }
+            return;
+        }
+
+        mostrarPago();
+    }
+
+    /* =====================================================
+       COPIAR ALIAS
+    ===================================================== */
+
+    function copiarAlias() {
+        const alias = "pamelalucero24";
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(alias)
+                .then(() => alert("Alias copiado ✅"))
+                .catch(() => copiarAliasRespaldo(alias));
+        } else {
+            copiarAliasRespaldo(alias);
+        }
+    }
+
+    function copiarAliasRespaldo(alias) {
+        const textarea = document.createElement("textarea");
+        textarea.value = alias;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        try {
+            document.execCommand("copy");
+            alert("Alias copiado ✅");
+        } catch (err) {
+            alert("No se pudo copiar automáticamente. Alias: " + alias);
+        }
+
+        document.body.removeChild(textarea);
+    }
+
+    /* =====================================================
+       WHATSAPP (pedido completo)
+    ===================================================== */
+
+    function enviarWhatsApp(metodoPago) {
+        const metodoEntrega = document.getElementById("metodo_entrega").value;
+        const direccion = document.getElementById("opciones").value;
+        const totalProductos = totalProductosInicial;
+        const totalFinal = Math.max(totalProductos + envio - descuentoAplicado, 0);
+
+        let productos = "";
+
+        document.querySelectorAll('[id^="producto-"]').forEach(card => {
+            const nombre = card.querySelector("h3").innerText;
+            const cantidad = card.querySelector('[id^="cantidad-"]').innerText;
+            const subtotal = card.querySelector('[id^="subtotal-"]').innerText;
+            productos += `▪ ${nombre}\n  ${cantidad} - ${subtotal}\n`;
+        });
+
+        const entregaTexto = metodoEntrega === "envio"
+            ? `Envío a domicilio - ${direccion} ($${formatearPrecio(envio)})`
+            : `Retiro en local - ${direccion}`;
+
+        const mensaje =
+            `🐾 Forrajería Rox\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n` +
+            `🛒 NUEVO PEDIDO\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `📦 Productos:\n${productos}\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n` +
+            `💰 Total productos: $${formatearPrecio(totalProductos)}\n` +
+            `🚚 Entrega: ${entregaTexto}\n` +
+            `💳 Pago: ${metodoPago}\n` +
+            `💵 Total final: $${formatearPrecio(totalFinal)}\n` +
+            `━━━━━━━━━━━━━━━━━━━━`;
+
+        window.open(`https://wa.me/5493541343314?text=${encodeURIComponent(mensaje)}`, "_blank");
+    }
+
+    /* =====================================================
+       INICIALIZACIÓN
+    ===================================================== */
+
+    document.addEventListener("DOMContentLoaded", function () {
+        formatearPreciosIniciales();
+        /* Con el carrito vacío los selects de entrega/pago no se renderizan
+           (solo aparecen cuando hay ítems), así que evitamos el error de JS
+           al no encontrar los elementos. */
+        if (document.getElementById("metodo_entrega")) {
+            cambiarOpciones();
+        }
+    });
+
+</script>
+
+{% endblock %}

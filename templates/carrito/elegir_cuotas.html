@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Elegir forma de pago | Forrajería Rox{% endblock %}
+
+{% block content %}
+
+<div class="cuotas-contenedor">
+
+    <h2>💳 Elegí cómo pagar</h2>
+    <p class="cuotas-subtitulo">El precio final incluye la comisión de Mercado Pago</p>
+
+    <p class="cuota-base">Subtotal sin comisión: <strong>${{ total_base }}</strong></p>
+
+
+    {% for opcion in opciones %}
+
+    <form method="post" action="{% url 'pagar' %}" class="opcion-form">
+        {% csrf_token %}
+        <input type="hidden" name="cuotas" value="{{ opcion.valor }}">
+        <input type="hidden" name="metodo_entrega" value="{{ metodo_entrega }}">
+        <input type="hidden" name="direccion" value="{{ direccion }}">
+
+        <button type="submit" class="opcion">
+            <span class="opcion-izq">
+                <span class="opcion-label">{{ opcion.label }}</span>
+                <span class="opcion-comision">Comisión: {{ opcion.comision_pct }}</span>
+                {% if opcion.cuota %}
+                    <span class="opcion-cuota">{{ opcion.valor }} x ${{ opcion.cuota }}</span>
+                {% endif %}
+            </span>
+
+            <span class="opcion-total">${{ opcion.total }}</span>
+        </button>
+    </form>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

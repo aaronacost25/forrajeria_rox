@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# Secretos / entorno
+.env
+
+# Respaldos y varios
+.git.zip
+*.log
+.DS_Store
+Thumbs.db
+
+preview.sqlite3

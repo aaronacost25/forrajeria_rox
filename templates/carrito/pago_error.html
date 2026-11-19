@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pago rechazado | Forrajería Rox{% endblock %}
+
+{% block content %}
+
+<div class="pagina-estado">
+
+    <div class="check">
+        <div class="icono error">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+        </div>
+        <h2>Pago rechazado</h2>
+        <p class="check-sub">Intentá nuevamente o consultanos por WhatsApp.</p>
+    </div>
+
+    <a href="{% url 'ver_carrito' %}" class="btn btn-carrito">
+        🛒 Volver al carrito
+    </a>
+
+</div>
+
+{% endblock %}

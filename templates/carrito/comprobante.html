@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comprobante N° {{ venta.id }} | Forrajería Rox{% endblock %}
+
+{% block content %}
+
+<div class="factura">
+
+    <h1>🧾 Comprobante de compra</h1>
+
+    <p><strong>Número:</strong> {{ venta.id }}</p>
+    <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+    <p><strong>Estado:</strong> {{ estado_pago }}</p>
+    <p>
+        <strong>Entrega:</strong>
+        {% if venta.metodo_entrega == 'envio' %}Envío a domicilio{% else %}Retiro en local{% endif %}
+        {% if venta.direccion %} — {{ venta.direccion }}{% endif %}
+    </p>
+
+    <table>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+
+        {% for detalle in detalles %}
+        <tr>
+            <td>{{ detalle.producto.nombre }}</td>
+            <td>{{ detalle.cantidad }}</td>
+            <td>${{ detalle.subtotal }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <p class="total-linea">Total: ${{ venta.total }}</p>
+
+    <a href="https://wa.me/5493541343314?text=🛒 Compra N°{{ venta.id }} - Total ${{ venta.total }}"
+       target="_blank"
+       rel="noopener"
+       class="btn btn-whatsapp">
+       📲 Avisar por WhatsApp
+    </a>
+
+</div>
+
+{% endblock %}
