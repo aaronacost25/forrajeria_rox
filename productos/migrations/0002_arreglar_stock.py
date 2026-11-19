@@ -1,4 +1,5 @@
-from django.db import migrations, models
+from django.db import migrations
+
 
 class Migration(migrations.Migration):
 
@@ -7,9 +8,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='producto',
-            name='stock',
-            field=models.IntegerField(default=0),
-        ),
     ]
